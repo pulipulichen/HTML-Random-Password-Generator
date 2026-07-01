@@ -15,12 +15,19 @@ Expanded the project with modular frontend architecture, PWA support, multilingu
 
 - Refactored `index.html` to load external `styles/main.css` and modular script files instead of inline-heavy logic.
 - Improved app metadata and installability setup with manifest, theme color, and favicon declarations.
+- Updated the seed field header markup to prevent duplicate click propagation from the seed visibility toggle in E2E/browser automation scenarios.
+
+## Fixed
+
+- Fixed deterministic mode seed visibility toggle behavior where a click could immediately revert from `text` back to `password` due to nested label-button interaction.
+- Corrected E2E history deletion expectations to align with current app initialization behavior that creates an initial generated password entry.
+
+## Tooling
+
+- Removed automatic host-side `node_modules` symlink creation from `Containerfile.test` so test dependencies remain container-scoped during standard runs.
 
 ## Documentation
 
 - Updated `README.md` with current architecture, PWA details, and Podman-based E2E instructions.
 - Added `README_zh_tw.md` for Traditional Chinese documentation parity.
-
-## Tooling
-
 - Added `.gitignore` and `.jshintrc` to standardize workspace hygiene and JavaScript linting configuration.

@@ -30,14 +30,17 @@ test('removes a single history entry when delete is clicked', async ({ page }) =
   const consoleErrors = trackConsoleErrors(page);
   await gotoFreshApp(page);
 
+  const historyItems = page.locator('#historyList > div');
+  await expect(historyItems).toHaveCount(1);
+
   await page.locator('input[name="length"][value="8"]').check();
   await page.locator('#generateBtn').click();
   await page.locator('input[name="length"][value="16"]').check();
   await page.locator('#generateBtn').click();
-  await expect(page.locator('#historyList > div')).toHaveCount(2);
+  await expect(historyItems).toHaveCount(3);
 
-  await page.locator('#historyList > div').first().getByTitle('Delete this entry').click();
-  await expect(page.locator('#historyList > div')).toHaveCount(1);
+  await historyItems.first().getByTitle('Delete this entry').click();
+  await expect(historyItems).toHaveCount(2);
 
   await assertNoConsoleErrors(consoleErrors);
 });
