@@ -1,0 +1,13 @@
+{
+  "esversion": 11,
+  "browser": true,
+  "globals": {
+    "lucide": false,
+    "t": false,
+    "initI18n": false,
+    "setLanguage": false,
+    "onLanguageChange": false,
+    "getCurrentLanguage": false,
+    "updateToggleSeedButton": false
+  }
+}

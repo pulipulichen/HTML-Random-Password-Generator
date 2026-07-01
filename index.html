@@ -1,91 +1,75 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>隨機密碼產生器</title>
+    <title>Random Password Generator</title>
+    <meta name="description" content="Secure, customizable, and automatically saves your preferences and history">
+    <meta name="theme-color" content="#2563eb">
+    <meta name="msapplication-TileColor" content="#2563eb">
+    <meta name="msapplication-TileImage" content="assets/favicon/favicon.png">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="assets/favicon/favicon.png" type="image/png">
+    <link rel="apple-touch-icon" href="assets/favicon/favicon.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <style>
-        /* 自訂選取反白顏色 */
-        ::selection {
-            background-color: #3b82f6;
-            color: white;
-        }
-        /* 隱藏數字輸入框的上下箭頭 */
-        input[type="number"]::-webkit-inner-spin-button,
-        input[type="number"]::-webkit-outer-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
-        input[type="number"] {
-            -moz-appearance: textfield;
-        }
-        .fade-in {
-            animation: fadeIn 0.3s ease-in-out;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-5px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-    </style>
+    <link rel="stylesheet" href="styles/main.css">
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex justify-center py-10 px-4">
 
-    <!-- 將容器放寬為 max-w-5xl 讓左右欄有足夠空間 -->
     <div class="max-w-5xl w-full space-y-8">
-        <!-- Header -->
         <div class="text-center space-y-2 mb-4">
+            <div class="flex justify-end mb-2">
+                <label class="flex items-center gap-2 text-sm text-slate-600">
+                    <span data-i18n="languageLabel">Language</span>
+                    <select id="language-select" class="px-2 py-1 border border-slate-300 rounded-md bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none cursor-pointer"></select>
+                </label>
+            </div>
             <h1 class="text-3xl font-bold text-slate-900 flex items-center justify-center gap-2">
                 <i data-lucide="shield-check" class="w-8 h-8 text-blue-600"></i>
-                隨機密碼產生器
+                <span data-i18n="appTitle">Random Password Generator</span>
             </h1>
-            <p class="text-slate-500">安全、客製化，並自動儲存您的偏好與紀錄</p>
+            <p class="text-slate-500" data-i18n="appSubtitle">Secure, customizable, and automatically saves your preferences and history</p>
         </div>
 
-        <!-- 建立網格系統：大螢幕時 3 等份，左欄佔 2 份，右欄佔 1 份 -->
         <div class="grid lg:grid-cols-3 gap-6 items-start">
             
-            <!-- Left Column: Generator (佔 2/3) -->
             <div class="lg:col-span-2 w-full">
-                <!-- Main Card -->
                 <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200">
                     
-                    <!-- Result Display -->
-                    <div class="relative mb-8">
+                    <div class="relative mb-8 group cursor-pointer" onclick="copyPassword()" data-i18n-title="copyPasswordTitle" title="Click to copy">
                         <input type="text" id="passwordResult" readonly 
-                            class="w-full bg-slate-100 text-center text-2xl md:text-3xl font-mono tracking-wider text-slate-800 py-4 px-12 rounded-xl outline-none border-2 border-transparent focus:border-blue-300 transition-colors cursor-text"
-                            placeholder="點擊下方產生密碼">
+                            class="w-full bg-slate-100 group-hover:bg-blue-50 text-center text-2xl md:text-3xl font-mono tracking-wider text-slate-800 py-4 px-12 rounded-xl outline-none border-2 border-transparent group-hover:border-blue-200 transition-colors cursor-pointer pointer-events-none"
+                            data-i18n-placeholder="passwordPlaceholder" placeholder="Click below to generate a password">
                         
-                        <button onclick="copyPassword()" id="copyBtn" class="absolute right-3 top-1/2 -translate-y-1/2 p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="複製密碼">
+                        <button id="copyBtn" class="absolute right-3 top-1/2 -translate-y-1/2 p-2 text-slate-400 group-hover:text-blue-600 rounded-lg transition-colors">
                             <i data-lucide="copy" class="w-6 h-6" id="copyIcon"></i>
                         </button>
                     </div>
 
-                    <!-- Options Grid -->
                     <div class="grid md:grid-cols-2 gap-8">
                         
-                        <!-- Left Column (inside Main Card): Length -->
                         <div class="space-y-4">
                             <h3 class="font-semibold text-lg flex items-center gap-2 border-b pb-2">
-                                <i data-lucide="ruler" class="w-5 h-5 text-blue-500"></i> 密碼長度
+                                <i data-lucide="ruler" class="w-5 h-5 text-blue-500"></i>
+                                <span data-i18n="passwordLength">Password Length</span>
                             </h3>
                             <div class="flex flex-col gap-3">
                                 <label class="flex items-center gap-3 cursor-pointer group">
                                     <input type="radio" name="length" value="8" class="w-4 h-4 text-blue-600 focus:ring-blue-500 cursor-pointer">
-                                    <span class="group-hover:text-blue-600 transition-colors">8 個字元</span>
+                                    <span class="group-hover:text-blue-600 transition-colors" data-i18n="length8">8 characters</span>
                                 </label>
                                 <label class="flex items-center gap-3 cursor-pointer group">
                                     <input type="radio" name="length" value="12" class="w-4 h-4 text-blue-600 focus:ring-blue-500 cursor-pointer">
-                                    <span class="group-hover:text-blue-600 transition-colors">12 個字元</span>
+                                    <span class="group-hover:text-blue-600 transition-colors" data-i18n="length12">12 characters</span>
                                 </label>
                                 <label class="flex items-center gap-3 cursor-pointer group">
                                     <input type="radio" name="length" value="16" class="w-4 h-4 text-blue-600 focus:ring-blue-500 cursor-pointer">
-                                    <span class="group-hover:text-blue-600 transition-colors">16 個字元</span>
+                                    <span class="group-hover:text-blue-600 transition-colors" data-i18n="length16">16 characters</span>
                                 </label>
                                 <label class="flex items-center gap-3 cursor-pointer group">
                                     <input type="radio" name="length" value="custom" id="customLengthRadio" class="w-4 h-4 text-blue-600 focus:ring-blue-500 cursor-pointer">
-                                    <span class="group-hover:text-blue-600 transition-colors">自訂長度：</span>
+                                    <span class="group-hover:text-blue-600 transition-colors" data-i18n="customLength">Custom length:</span>
                                     <input type="number" id="customLengthInput" min="4" max="128" value="20" 
                                         class="w-20 px-2 py-1 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none disabled:bg-slate-100 disabled:text-slate-400"
                                         disabled>
@@ -93,571 +77,118 @@
                             </div>
                         </div>
 
-                        <!-- Right Column (inside Main Card): Types -->
                         <div class="space-y-4">
                             <h3 class="font-semibold text-lg flex items-center gap-2 border-b pb-2">
-                                <i data-lucide="keyboard" class="w-5 h-5 text-blue-500"></i> 密碼類型
+                                <i data-lucide="keyboard" class="w-5 h-5 text-blue-500"></i>
+                                <span data-i18n="passwordType">Character Types</span>
                             </h3>
                             
-                            <!-- Letters -->
                             <div class="space-y-2">
                                 <label class="flex items-center gap-3 cursor-pointer group">
                                     <input type="checkbox" id="useLetters" class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500 cursor-pointer">
-                                    <span class="font-medium group-hover:text-blue-600 transition-colors">包含英文字母</span>
+                                    <span class="font-medium group-hover:text-blue-600 transition-colors" data-i18n="useLetters">Include letters</span>
                                 </label>
                                 
                                 <div id="letterOptions" class="ml-7 pl-4 border-l-2 border-slate-200 space-y-2 opacity-50 pointer-events-none transition-opacity">
                                     <label class="flex items-center gap-2 cursor-pointer group text-sm">
                                         <input type="radio" name="letterType" value="standard" class="w-3.5 h-3.5 text-blue-600 focus:ring-blue-500 cursor-pointer">
-                                        <span class="group-hover:text-blue-600 transition-colors">普通大小寫</span>
+                                        <span class="group-hover:text-blue-600 transition-colors" data-i18n="letterStandard">Mixed case</span>
                                     </label>
-                                    <label class="flex items-center gap-2 cursor-pointer group text-sm" title="排除大寫 I、小寫 l、大小寫 O">
+                                    <label class="flex items-center gap-2 cursor-pointer group text-sm" data-i18n-title="letterEasyTitle" title="Exclude uppercase I, lowercase l, and O/o">
                                         <input type="radio" name="letterType" value="easy" class="w-3.5 h-3.5 text-blue-600 focus:ring-blue-500 cursor-pointer">
-                                        <span class="group-hover:text-blue-600 transition-colors">易識別 (排除 I, l, O, o)</span>
+                                        <span class="group-hover:text-blue-600 transition-colors" data-i18n="letterEasy">Easy to read (exclude I, l, O, o)</span>
                                     </label>
                                 </div>
                             </div>
 
-                            <!-- Numbers & Symbols -->
                             <div class="pt-2 space-y-3">
                                 <label class="flex items-center gap-3 cursor-pointer group">
                                     <input type="checkbox" id="useNumbers" class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500 cursor-pointer">
-                                    <span class="font-medium group-hover:text-blue-600 transition-colors">包含數字 (0-9)</span>
+                                    <span class="font-medium group-hover:text-blue-600 transition-colors" data-i18n="useNumbers">Include numbers (0-9)</span>
                                 </label>
                                 
                                 <div class="flex items-start gap-3">
                                     <input type="checkbox" id="useSpecial" class="w-4 h-4 mt-1 text-blue-600 rounded focus:ring-blue-500 cursor-pointer">
                                     <div class="flex-1">
-                                        <label for="useSpecial" class="font-medium block cursor-pointer hover:text-blue-600 transition-colors">包含特殊符號</label>
+                                        <label for="useSpecial" class="font-medium block cursor-pointer hover:text-blue-600 transition-colors" data-i18n="useSpecial">Include special characters</label>
                                         <input type="text" id="specialCharsInput" value="@#$~,.-=+/&^%" 
                                             class="mt-1 w-full px-2 py-1 text-sm bg-white border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow font-mono tracking-widest text-slate-600"
-                                            placeholder="輸入允許的特殊符號">
+                                            data-i18n-placeholder="specialCharsPlaceholder" placeholder="Enter allowed special characters">
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Seed & Target Section -->
                     <div class="mt-8 p-5 bg-blue-50/50 rounded-xl border border-blue-100 space-y-4">
                         <div class="border-b border-blue-200 pb-2 mb-3">
                             <h3 class="font-semibold text-lg flex items-center gap-2 text-blue-800">
-                                <i data-lucide="key" class="w-5 h-5"></i> 固定密碼模式 <span class="text-xs bg-blue-200 text-blue-800 px-2 py-0.5 rounded-full ml-2">種子功能</span>
+                                <i data-lucide="key" class="w-5 h-5"></i>
+                                <span data-i18n="seedModeTitle">Deterministic Mode</span>
+                                <span class="text-xs bg-blue-200 text-blue-800 px-2 py-0.5 rounded-full ml-2" data-i18n="seedModeBadge">Seed</span>
                             </h3>
-                            <p class="text-sm text-blue-600/80 mt-1">輸入「目標文字」時，將根據種子、目標與當前規則，產生<strong class="font-bold">固定不變</strong>的密碼。</p>
+                            <p class="text-sm text-blue-600/80 mt-1" data-i18n-html="seedModeDesc">When a target is entered, a <strong class="font-bold">fixed</strong> password is generated from the seed, target, and current rules.</p>
                         </div>
                         
                         <div class="grid md:grid-cols-2 gap-4">
                             <div class="space-y-1">
                                 <label class="text-sm font-medium text-slate-700 flex justify-between">
-                                    種子碼 (Seed) 
-                                    <button id="toggleSeedBtn" class="text-blue-500 hover:text-blue-700 text-xs flex items-center gap-1"><i data-lucide="eye" class="w-3 h-3"></i> 顯示</button>
+                                    <span data-i18n="seedLabel">Seed</span>
+                                    <button type="button" id="toggleSeedBtn" class="text-blue-500 hover:text-blue-700 text-xs flex items-center gap-1"><i data-lucide="eye" class="w-3 h-3"></i> <span data-i18n="showSeed">Show</span></button>
                                 </label>
-                                <input type="password" id="seedInput" placeholder="自訂您的專屬秘密單字" 
+                                <input type="password" id="seedInput" data-i18n-placeholder="seedPlaceholder" placeholder="Your secret word" 
                                     class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow">
                             </div>
                             <div class="space-y-1">
-                                <label class="text-sm font-medium text-slate-700">目標文字 (例如網站名稱)</label>
-                                <input type="text" id="targetInput" placeholder="例如：Facebook, Gmail" 
+                                <label class="text-sm font-medium text-slate-700" data-i18n="targetLabel">Target (e.g. site name)</label>
+                                <input type="text" id="targetInput" data-i18n-placeholder="targetPlaceholder" placeholder="e.g. Facebook, Gmail" 
                                     class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow">
                             </div>
                         </div>
                     </div>
 
-                    <!-- Action Button -->
-                    <button onclick="generatePassword()" class="mt-8 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-xl shadow-md hover:shadow-lg transform active:scale-[0.98] transition-all flex justify-center items-center gap-2">
+                    <button id="generateBtn" onclick="generatePassword()" class="mt-8 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-xl shadow-md hover:shadow-lg transform active:scale-[0.98] transition-all flex justify-center items-center gap-2">
                         <i data-lucide="zap" class="w-5 h-5"></i>
-                        產生密碼
+                        <span data-i18n="generateButton">Generate Password</span>
                     </button>
                     
-                    <p id="errorMsg" class="text-red-500 text-sm text-center mt-3 hidden">請至少選擇一種字元類型！</p>
+                    <p id="errorMsg" class="text-red-500 text-sm text-center mt-3 hidden" data-i18n="errorNoCharTypes">Please select at least one character type!</p>
                 </div>
             </div>
 
-            <!-- Right Column: History (佔 1/3) -->
             <div class="lg:col-span-1 w-full lg:sticky lg:top-6">
-                <!-- History Section -->
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
                     <div class="flex justify-between items-center mb-4 border-b pb-2">
                         <h3 class="font-semibold text-lg flex items-center gap-2">
-                            <i data-lucide="history" class="w-5 h-5 text-slate-500"></i> 歷史紀錄
+                            <i data-lucide="history" class="w-5 h-5 text-slate-500"></i>
+                            <span data-i18n="historyTitle">History</span>
                         </h3>
-                        <button onclick="clearHistory()" class="text-sm text-slate-400 hover:text-red-500 transition-colors flex items-center gap-1">
-                            <i data-lucide="trash-2" class="w-4 h-4"></i> 清除
+                        <button id="clearHistoryBtn" type="button" onclick="clearHistory()" class="text-sm text-slate-400 hover:text-red-500 transition-colors flex items-center gap-1">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            <span data-i18n="clearHistory">Clear</span>
                         </button>
                     </div>
                     
-                    <!-- 增加了側邊欄的高度以顯示更多歷史紀錄 -->
                     <div id="historyList" class="space-y-2 max-h-[32rem] overflow-y-auto pr-2 custom-scrollbar">
-                        <!-- 歷史紀錄將在這裡生成 -->
-                        <p class="text-center text-slate-400 py-4 text-sm" id="emptyHistoryMsg">目前尚無歷史紀錄</p>
+                        <p class="text-center text-slate-400 py-4 text-sm" id="emptyHistoryMsg" data-i18n="emptyHistory">No history yet</p>
                     </div>
                 </div>
             </div>
 
-        </div> <!-- End of Grid -->
+        </div>
     </div>
 
-    <script>
-        // 初始化 Lucide Icons
-        lucide.createIcons();
-
-        // DOM 元素
-        const elements = {
-            result: document.getElementById('passwordResult'),
-            copyBtn: document.getElementById('copyBtn'),
-            copyIcon: document.getElementById('copyIcon'),
-            lengthRadios: document.getElementsByName('length'),
-            customLengthInput: document.getElementById('customLengthInput'),
-            customLengthRadio: document.getElementById('customLengthRadio'),
-            useLetters: document.getElementById('useLetters'),
-            letterOptions: document.getElementById('letterOptions'),
-            letterTypeRadios: document.getElementsByName('letterType'),
-            useNumbers: document.getElementById('useNumbers'),
-            useSpecial: document.getElementById('useSpecial'),
-            specialCharsInput: document.getElementById('specialCharsInput'),
-            seedInput: document.getElementById('seedInput'),
-            targetInput: document.getElementById('targetInput'),
-            toggleSeedBtn: document.getElementById('toggleSeedBtn'),
-            errorMsg: document.getElementById('errorMsg'),
-            historyList: document.getElementById('historyList'),
-            emptyHistoryMsg: document.getElementById('emptyHistoryMsg')
-        };
-
-        // 常數設定
-        const CHAR_SETS = {
-            standardLower: 'abcdefghijklmnopqrstuvwxyz',
-            standardUpper: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
-            easyLower: 'abcdefghijkmnpqrstuvwxyz', // 排除 l, o
-            easyUpper: 'ABCDEFGHJKLMNPQRSTUVWXYZ', // 排除 I, O
-            numbers: '0123456789',
-            defaultSpecial: '@#$~,.-=+/&^%'
-        };
-
-        const MAX_HISTORY = 20;
-
-        // PRNG (偽隨機數產生器) 演算法：用於產生固定的結果
-        function xmur3(str) {
-            for(var i = 0, h = 1779033703 ^ str.length; i < str.length; i++) {
-                h = Math.imul(h ^ str.charCodeAt(i), 3432918353);
-                h = h << 13 | h >>> 19;
-            } return function() {
-                h = Math.imul(h ^ (h >>> 16), 2246822507);
-                h = Math.imul(h ^ (h >>> 13), 3266489909);
-                return (h ^= h >>> 16) >>> 0;
-            }
-        }
-
-        function mulberry32(a) {
-            return function() {
-              var t = a += 0x6D2B79F5;
-              t = Math.imul(t ^ t >>> 15, t | 1);
-              t ^= t + Math.imul(t ^ t >>> 7, t | 61);
-              return ((t ^ t >>> 14) >>> 0) / 4294967296;
-            }
-        }
-
-        // 初始化設定與事件監聽
-        function init() {
-            loadOptions();
-            loadHistory();
-            setupEventListeners();
-            toggleLetterOptions();
-            
-            // 修改：如果有歷史紀錄，就顯示最新的一筆密碼；如果沒有（完全沒產生過），才自動產生
-            const history = getHistory();
-            if (history.length > 0) {
-                elements.result.value = history[0].password;
-            } else {
-                generatePassword();
-            }
-        }
-
-        function setupEventListeners() {
-            // 當選擇/取消自訂長度時，啟用/停用輸入框
-            elements.lengthRadios.forEach(radio => {
-                radio.addEventListener('change', () => {
-                    elements.customLengthInput.disabled = (radio.value !== 'custom');
-                    if(radio.value === 'custom') elements.customLengthInput.focus();
-                    saveOptions();
-                });
-            });
-
-            elements.customLengthInput.addEventListener('input', saveOptions);
-
-            // 字母相關連動
-            elements.useLetters.addEventListener('change', () => {
-                toggleLetterOptions();
-                saveOptions();
-            });
-
-            // 其他選項變更時儲存
-            elements.letterTypeRadios.forEach(r => r.addEventListener('change', saveOptions));
-            elements.useNumbers.addEventListener('change', saveOptions);
-            elements.useSpecial.addEventListener('change', saveOptions);
-
-            // 當自訂特殊符號變更時儲存，並即時更新密碼（如果在固定模式下）
-            elements.specialCharsInput.addEventListener('input', () => {
-                saveOptions();
-                if (elements.targetInput.value.trim() !== '') generatePassword();
-            });
-
-            // 種子與目標輸入事件 (即時觸發密碼更新)
-            elements.seedInput.addEventListener('input', () => {
-                saveOptions();
-                if (elements.targetInput.value.trim() !== '') generatePassword();
-            });
-            elements.targetInput.addEventListener('input', generatePassword);
-            
-            // 顯示/隱藏種子碼
-            elements.toggleSeedBtn.addEventListener('click', () => {
-                if (elements.seedInput.type === 'password') {
-                    elements.seedInput.type = 'text';
-                    elements.toggleSeedBtn.innerHTML = '<i data-lucide="eye-off" class="w-3 h-3"></i> 隱藏';
-                } else {
-                    elements.seedInput.type = 'password';
-                    elements.toggleSeedBtn.innerHTML = '<i data-lucide="eye" class="w-3 h-3"></i> 顯示';
-                }
-                lucide.createIcons();
-            });
-        }
-
-        function toggleLetterOptions() {
-            if (elements.useLetters.checked) {
-                elements.letterOptions.classList.remove('opacity-50', 'pointer-events-none');
-            } else {
-                elements.letterOptions.classList.add('opacity-50', 'pointer-events-none');
-            }
-        }
-
-        // 取得目前選擇的長度
-        function getSelectedLength() {
-            let length = 12; // 預設
-            for (const radio of elements.lengthRadios) {
-                if (radio.checked) {
-                    if (radio.value === 'custom') {
-                        length = parseInt(elements.customLengthInput.value, 10);
-                        if (isNaN(length) || length < 1) length = 12;
-                    } else {
-                        length = parseInt(radio.value, 10);
-                    }
-                    break;
-                }
-            }
-            return length;
-        }
-
-        // 產生密碼核心邏輯
-        function generatePassword() {
-            elements.errorMsg.classList.add('hidden');
-            
-            const isUseLetters = elements.useLetters.checked;
-            const isUseNumbers = elements.useNumbers.checked;
-            const isUseSpecial = elements.useSpecial.checked;
-
-            if (!isUseLetters && !isUseNumbers && !isUseSpecial) {
-                elements.errorMsg.classList.remove('hidden');
-                return;
-            }
-
-            // 取得種子與目標
-            const seedWord = elements.seedInput.value || '';
-            const targetWord = elements.targetInput.value.trim();
-            const targetLength = getSelectedLength();
-            
-            let letterType = 'standard';
-            for (const radio of elements.letterTypeRadios) {
-                if (radio.checked) { letterType = radio.value; break; }
-            }
-
-            // 取得自訂特殊符號 (若空則使用預設)
-            let customSpecialChars = elements.specialCharsInput.value;
-            if (customSpecialChars === '') {
-                customSpecialChars = CHAR_SETS.defaultSpecial;
-            }
-
-            // 決定隨機函式：如果有輸入目標文字，則啟用確定性隨機
-            let randFunc = Math.random;
-            if (targetWord !== '') {
-                // 將所有規則（包含自訂特殊符號）組合成一個字串，確保更改任何規則都會產生不同的密碼
-                const configStr = `${seedWord}|${targetWord}|${targetLength}|${isUseLetters}|${letterType}|${isUseNumbers}|${isUseSpecial}|${customSpecialChars}`;
-                const seedHash = xmur3(configStr)(); // 產生 32-bit 整數 seed
-                randFunc = mulberry32(seedHash);     // 初始化 PRNG
-            }
-
-            let pool = '';
-            let requiredChars = [];
-
-            // 建立字元池並確保每種選取的類型至少出現一次
-            if (isUseLetters) {
-                if (letterType === 'standard') {
-                    pool += CHAR_SETS.standardLower + CHAR_SETS.standardUpper;
-                    requiredChars.push(getRandomChar(CHAR_SETS.standardLower, randFunc));
-                    requiredChars.push(getRandomChar(CHAR_SETS.standardUpper, randFunc));
-                } else {
-                    pool += CHAR_SETS.easyLower + CHAR_SETS.easyUpper;
-                    requiredChars.push(getRandomChar(CHAR_SETS.easyLower, randFunc));
-                    requiredChars.push(getRandomChar(CHAR_SETS.easyUpper, randFunc));
-                }
-            }
-
-            if (isUseNumbers) {
-                pool += CHAR_SETS.numbers;
-                requiredChars.push(getRandomChar(CHAR_SETS.numbers, randFunc));
-            }
-
-            if (isUseSpecial) {
-                pool += customSpecialChars;
-                requiredChars.push(getRandomChar(customSpecialChars, randFunc));
-            }
-
-            let passwordArray = [...requiredChars];
-
-            // 填滿剩餘長度
-            while (passwordArray.length < targetLength) {
-                passwordArray.push(getRandomChar(pool, randFunc));
-            }
-
-            // 如果要求的長度小於必備字元數，截斷它
-            if (passwordArray.length > targetLength) {
-                passwordArray = passwordArray.slice(0, targetLength);
-            }
-
-            // 洗牌演算法 (Fisher-Yates) 確保隨機性，使用 randFunc
-            for (let i = passwordArray.length - 1; i > 0; i--) {
-                const j = Math.floor(randFunc() * (i + 1));
-                [passwordArray[i], passwordArray[j]] = [passwordArray[j], passwordArray[i]];
-            }
-
-            const finalPassword = passwordArray.join('');
-            
-            // 顯示與動畫
-            elements.result.value = finalPassword;
-            elements.result.classList.remove('fade-in');
-            void elements.result.offsetWidth; // Trigger reflow
-            elements.result.classList.add('fade-in');
-
-            // 儲存紀錄
-            addHistory(finalPassword);
-        }
-
-        function getRandomChar(str, randFunc = Math.random) {
-            return str.charAt(Math.floor(randFunc() * str.length));
-        }
-
-        // 複製密碼
-        function copyPassword() {
-            const pwd = elements.result.value;
-            if (!pwd) return;
-
-            navigator.clipboard.writeText(pwd).then(() => {
-                // 切換圖示為成功
-                const iconSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check w-6 h-6 text-green-500"><path d="M20 6 9 17l-5-5"/></svg>`;
-                elements.copyBtn.innerHTML = iconSvg;
-                
-                setTimeout(() => {
-                    elements.copyBtn.innerHTML = `<i data-lucide="copy" class="w-6 h-6" id="copyIcon"></i>`;
-                    lucide.createIcons();
-                }, 2000);
-            }).catch(err => {
-                // 備用複製方法
-                elements.result.select();
-                document.execCommand('copy');
-            });
-        }
-
-        // localStorage - 儲存偏好設定
-        function saveOptions() {
-            let lengthVal = '12';
-            for (const radio of elements.lengthRadios) {
-                if (radio.checked) { lengthVal = radio.value; break; }
-            }
-
-            let letterTypeVal = 'standard';
-            for (const radio of elements.letterTypeRadios) {
-                if (radio.checked) { letterTypeVal = radio.value; break; }
-            }
-
-            const options = {
-                length: lengthVal,
-                customLength: elements.customLengthInput.value,
-                useLetters: elements.useLetters.checked,
-                letterType: letterTypeVal,
-                useNumbers: elements.useNumbers.checked,
-                useSpecial: elements.useSpecial.checked,
-                specialChars: elements.specialCharsInput.value, // 儲存自訂特殊符號
-                seedWord: elements.seedInput.value // 儲存種子碼
-            };
-            localStorage.setItem('pwdGenOptions', JSON.stringify(options));
-        }
-
-        // localStorage - 載入偏好設定
-        function loadOptions() {
-            const saved = localStorage.getItem('pwdGenOptions');
-            if (saved) {
-                try {
-                    const options = JSON.parse(saved);
-                    
-                    // 恢復長度
-                    elements.lengthRadios.forEach(radio => {
-                        radio.checked = (radio.value === options.length);
-                    });
-                    elements.customLengthInput.value = options.customLength || '20';
-                    elements.customLengthInput.disabled = (options.length !== 'custom');
-
-                    // 恢復類型
-                    elements.useLetters.checked = options.useLetters;
-                    elements.letterTypeRadios.forEach(radio => {
-                        radio.checked = (radio.value === options.letterType);
-                    });
-                    elements.useNumbers.checked = options.useNumbers;
-                    elements.useSpecial.checked = options.useSpecial;
-                    
-                    // 恢復自訂特殊符號
-                    elements.specialCharsInput.value = options.specialChars || CHAR_SETS.defaultSpecial;
-
-                    // 恢復種子碼，若無則產生隨機預設值
-                    elements.seedInput.value = options.seedWord || generateDefaultSeed();
-
-                } catch (e) {
-                    console.error("載入設定失敗", e);
-                    setDefaultOptions();
-                }
-            } else {
-                setDefaultOptions();
-            }
-        }
-
-        function setDefaultOptions() {
-            document.querySelector('input[name="length"][value="12"]').checked = true;
-            elements.useLetters.checked = true;
-            document.querySelector('input[name="letterType"][value="standard"]').checked = true;
-            elements.useNumbers.checked = true;
-            elements.useSpecial.checked = true;
-            elements.specialCharsInput.value = CHAR_SETS.defaultSpecial;
-            elements.seedInput.value = generateDefaultSeed();
-        }
-        
-        function generateDefaultSeed() {
-            // 隨機產生一個 8 字元的預設種子碼
-            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-            let seed = '';
-            for (let i = 0; i < 8; i++) seed += chars.charAt(Math.floor(Math.random() * chars.length));
-            return seed;
-        }
-
-        // 歷史紀錄處理
-        function addHistory(password) {
-            let history = getHistory();
-            
-            // 如果最新的一筆紀錄與當前產生的密碼完全相同，則不重複新增
-            if (history.length > 0 && history[0].password === password) {
-                return;
-            }
-            
-            // 取得現在時間格式化 (YYYY/MM/DD HH:mm:ss)
-            const now = new Date();
-            const timeStr = `${now.getFullYear()}/${String(now.getMonth()+1).padStart(2,'0')}/${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
-            
-            // 加入到陣列開頭
-            history.unshift({ password, time: timeStr });
-            
-            // 限制 20 筆
-            if (history.length > MAX_HISTORY) {
-                history = history.slice(0, MAX_HISTORY);
-            }
-
-            localStorage.setItem('pwdGenHistory', JSON.stringify(history));
-            renderHistory(history);
-        }
-
-        function getHistory() {
-            const saved = localStorage.getItem('pwdGenHistory');
-            if (saved) {
-                try { return JSON.parse(saved); } catch (e) { return []; }
-            }
-            return [];
-        }
-
-        function loadHistory() {
-            renderHistory(getHistory());
-        }
-
-        function renderHistory(history) {
-            elements.historyList.innerHTML = '';
-            
-            if (history.length === 0) {
-                elements.emptyHistoryMsg.style.display = 'block';
-                elements.historyList.appendChild(elements.emptyHistoryMsg);
-                return;
-            }
-            
-            elements.emptyHistoryMsg.style.display = 'none';
-
-            history.forEach((item, index) => {
-                const div = document.createElement('div');
-                // 加上 group、cursor-pointer 與 hover:bg-blue-50 效果，讓整行變得像按鈕一樣
-                div.className = 'group flex justify-between items-center p-3 bg-slate-50 hover:bg-blue-50 rounded-lg border border-slate-100 transition-colors fade-in cursor-pointer';
-                
-                // 處理特殊字元，避免破壞行內 JavaScript 語法
-                const safePassword = item.password.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
-                
-                // 將複製事件綁定在整行，並將圖示元素傳入作為動畫切換目標
-                div.setAttribute('onclick', `copySpecificPassword('${safePassword}', this.querySelector('.copy-indicator'))`);
-                
-                div.innerHTML = `
-                    <div class="overflow-hidden pr-4 flex-1">
-                        <p class="font-mono text-slate-800 font-medium truncate tracking-wider">${item.password.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</p>
-                        <p class="text-xs text-slate-400 mt-1">${item.time}</p>
-                    </div>
-                    <div class="flex items-center gap-1 flex-shrink-0">
-                        <span class="copy-indicator text-slate-400 group-hover:text-blue-600 transition-colors p-2" title="點擊複製">
-                            <i data-lucide="copy" class="w-4 h-4"></i>
-                        </span>
-                        <!-- 加上 event.stopPropagation() 防止點擊刪除時同時觸發整行的複製事件 -->
-                        <button onclick="event.stopPropagation(); deleteHistoryItem(${index})" class="text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-md transition-colors p-2" title="刪除此紀錄">
-                            <i data-lucide="trash-2" class="w-4 h-4"></i>
-                        </button>
-                    </div>
-                `;
-                elements.historyList.appendChild(div);
-            });
-            
-            // 重新渲染新加入的 icon
-            lucide.createIcons();
-        }
-
-        // 刪除單筆歷史紀錄
-        function deleteHistoryItem(index) {
-            let history = getHistory();
-            history.splice(index, 1); // 移除該索引的項目
-            localStorage.setItem('pwdGenHistory', JSON.stringify(history));
-            renderHistory(history); // 重新渲染畫面
-        }
-
-        function clearHistory() {
-            if(confirm('確定要清除所有密碼紀錄嗎？')) {
-                localStorage.removeItem('pwdGenHistory');
-                renderHistory([]);
-            }
-        }
-
-        // 複製歷史紀錄中的密碼
-        function copySpecificPassword(pwd, btnElement) {
-            navigator.clipboard.writeText(pwd).then(() => {
-                const originalHTML = btnElement.innerHTML;
-                btnElement.innerHTML = `<i data-lucide="check" class="w-4 h-4 text-green-500"></i>`;
-                lucide.createIcons();
-                setTimeout(() => {
-                    btnElement.innerHTML = originalHTML;
-                    lucide.createIcons();
-                }, 2000);
-            });
-        }
-
-        // 啟動程式
-        window.addEventListener('DOMContentLoaded', init);
-
-    </script>
+    <script src="scripts/modules/i18n/en.js"></script>
+    <script src="scripts/modules/i18n/zh-TW.js"></script>
+    <script src="scripts/modules/i18n.js"></script>
+    <script src="scripts/core/constants.js"></script>
+    <script src="scripts/utils/prng.js"></script>
+    <script src="scripts/ui/dom.js"></script>
+    <script src="scripts/services/storage.js"></script>
+    <script src="scripts/ui/history.js"></script>
+    <script src="scripts/core/password.js"></script>
+    <script src="scripts/ui/clipboard.js"></script>
+    <script src="scripts/ui/events.js"></script>
+    <script src="scripts/app.js"></script>
 </body>
 </html>

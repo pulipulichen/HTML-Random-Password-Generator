@@ -1,0 +1,16 @@
+{
+  "name": "Random Password Generator",
+  "short_name": "Pwd Generator",
+  "description": "Secure, customizable, and automatically saves your preferences and history",
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#2563eb",
+  "background_color": "#f8fafc",
+  "icons": [
+    {
+      "src": "assets/favicon/favicon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

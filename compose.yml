@@ -1,0 +1,7 @@
+services:
+  test-runner:
+    build:
+      context: .
+      dockerfile: Containerfile.test
+    volumes:
+      - .:/app

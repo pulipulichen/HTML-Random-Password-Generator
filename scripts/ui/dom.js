@@ -1,0 +1,20 @@
+const elements = {
+    result: document.getElementById('passwordResult'),
+    copyBtn: document.getElementById('copyBtn'),
+    copyIcon: document.getElementById('copyIcon'),
+    lengthRadios: document.getElementsByName('length'),
+    customLengthInput: document.getElementById('customLengthInput'),
+    customLengthRadio: document.getElementById('customLengthRadio'),
+    useLetters: document.getElementById('useLetters'),
+    letterOptions: document.getElementById('letterOptions'),
+    letterTypeRadios: document.getElementsByName('letterType'),
+    useNumbers: document.getElementById('useNumbers'),
+    useSpecial: document.getElementById('useSpecial'),
+    specialCharsInput: document.getElementById('specialCharsInput'),
+    seedInput: document.getElementById('seedInput'),
+    targetInput: document.getElementById('targetInput'),
+    toggleSeedBtn: document.getElementById('toggleSeedBtn'),
+    errorMsg: document.getElementById('errorMsg'),
+    historyList: document.getElementById('historyList'),
+    emptyHistoryMsg: document.getElementById('emptyHistoryMsg')
+};
