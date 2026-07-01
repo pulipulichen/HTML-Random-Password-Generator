@@ -264,8 +264,13 @@
             setupEventListeners();
             toggleLetterOptions();
             
-            // 網頁載入完成後，自動產生一次密碼
-            generatePassword();
+            // 修改：如果有歷史紀錄，就顯示最新的一筆密碼；如果沒有（完全沒產生過），才自動產生
+            const history = getHistory();
+            if (history.length > 0) {
+                elements.result.value = history[0].password;
+            } else {
+                generatePassword();
+            }
         }
 
         function setupEventListeners() {
@@ -589,25 +594,45 @@
             
             elements.emptyHistoryMsg.style.display = 'none';
 
-            history.forEach(item => {
+            history.forEach((item, index) => {
                 const div = document.createElement('div');
-                div.className = 'flex justify-between items-center p-3 bg-slate-50 hover:bg-slate-100 rounded-lg border border-slate-100 transition-colors fade-in';
+                // 加上 group、cursor-pointer 與 hover:bg-blue-50 效果，讓整行變得像按鈕一樣
+                div.className = 'group flex justify-between items-center p-3 bg-slate-50 hover:bg-blue-50 rounded-lg border border-slate-100 transition-colors fade-in cursor-pointer';
                 
-                // 為了安全，密碼預設顯示為星號或點點，點擊可複製
+                // 處理特殊字元，避免破壞行內 JavaScript 語法
+                const safePassword = item.password.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+                
+                // 將複製事件綁定在整行，並將圖示元素傳入作為動畫切換目標
+                div.setAttribute('onclick', `copySpecificPassword('${safePassword}', this.querySelector('.copy-indicator'))`);
+                
                 div.innerHTML = `
-                    <div class="overflow-hidden pr-4">
-                        <p class="font-mono text-slate-800 font-medium truncate tracking-wider">${item.password}</p>
+                    <div class="overflow-hidden pr-4 flex-1">
+                        <p class="font-mono text-slate-800 font-medium truncate tracking-wider">${item.password.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</p>
                         <p class="text-xs text-slate-400 mt-1">${item.time}</p>
                     </div>
-                    <button onclick="copySpecificPassword('${item.password}', this)" class="text-slate-400 hover:text-blue-600 transition-colors flex-shrink-0 p-2" title="複製此密碼">
-                        <i data-lucide="copy" class="w-4 h-4"></i>
-                    </button>
+                    <div class="flex items-center gap-1 flex-shrink-0">
+                        <span class="copy-indicator text-slate-400 group-hover:text-blue-600 transition-colors p-2" title="點擊複製">
+                            <i data-lucide="copy" class="w-4 h-4"></i>
+                        </span>
+                        <!-- 加上 event.stopPropagation() 防止點擊刪除時同時觸發整行的複製事件 -->
+                        <button onclick="event.stopPropagation(); deleteHistoryItem(${index})" class="text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-md transition-colors p-2" title="刪除此紀錄">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    </div>
                 `;
                 elements.historyList.appendChild(div);
             });
             
             // 重新渲染新加入的 icon
             lucide.createIcons();
+        }
+
+        // 刪除單筆歷史紀錄
+        function deleteHistoryItem(index) {
+            let history = getHistory();
+            history.splice(index, 1); // 移除該索引的項目
+            localStorage.setItem('pwdGenHistory', JSON.stringify(history));
+            renderHistory(history); // 重新渲染畫面
         }
 
         function clearHistory() {
